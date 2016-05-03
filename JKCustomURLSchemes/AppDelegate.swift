@@ -61,6 +61,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             print("URL Scheme is \(url.scheme)")
             if let host = url.host {
                 print("URL Host is \(host)")
+                let alertController = UIAlertController(title: "Custom URL Schemes", message: "Scheme is \(url.scheme) and \(host)", preferredStyle: .Alert)
+                
+                let OKAction = UIAlertAction(title: "OK", style: .Default) { (action) in
+                    
+                }
+                alertController.addAction(OKAction)
+                
+                self.window?.rootViewController?.presentViewController(alertController, animated: true) {
+                
+                }
             }
         }
         
