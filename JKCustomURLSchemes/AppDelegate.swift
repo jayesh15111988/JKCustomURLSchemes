@@ -18,6 +18,58 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Override point for customization after application launch.
         return true
     }
+    
+    // MARK: Method for demonstrating use of custom URL schemes.
+    func application(application: UIApplication, openURL url: NSURL, sourceApplication: String?, annotation: AnyObject) -> Bool {
+        let urlComponents = NSURLComponents(URL: url, resolvingAgainstBaseURL: false)
+        if let items = urlComponents?.queryItems {
+            //jkcustomurlschemes://?backgroundColor=red&title=Custom URLs
+            if (url.scheme == "jkcustomurlschemes") {
+                var color: UIColor? = UIColor.blackColor()
+                var vcTitle = "Unknown"
+                
+                if let _ = items.first, propertyValue = items.first?.value {
+                    if (propertyValue == "red") {
+                        color = UIColor.redColor()
+                    } else if (propertyValue == "green") {
+                        color = UIColor.greenColor()
+                    }
+                }
+                
+                if items.count > 1 {
+                    let nextItem = items[1]
+                    if let value = nextItem.value {
+                        vcTitle = value
+                    }
+                }
+                
+                if (color != nil) {
+                    self.dismiss()
+                    self.window?.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+                    let vc = UIViewController()
+                    vc.view.backgroundColor = color
+                    vc.title = vcTitle
+                    let navController = UINavigationController(rootViewController: vc)
+                    let barButtonItem = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: #selector(dismiss))
+                    vc.navigationItem.leftBarButtonItem = barButtonItem
+                    self.window?.rootViewController?.presentViewController(navController, animated: true, completion: nil)
+                    return true
+                }
+            }
+        } else {
+            // URL entered through Safari for example is : jkcustomurlschemes://[Any arbitrary host]
+            print("URL Scheme is \(url.scheme)")
+            if let host = url.host {
+                print("URL Host is \(host)")
+            }
+        }
+        
+        return false
+    }
+    
+    func dismiss() {
+        self.window?.rootViewController?.dismissViewControllerAnimated(true, completion: nil)
+    }
 
     func applicationWillResignActive(application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.
